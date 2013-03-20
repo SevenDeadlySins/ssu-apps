@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ TITLE }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 100px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+      table{
+        width: 100%;
+      }
+    </style>
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <!---
+    <link rel="shortcut icon" href="/static/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/static/ico/apple-touch-icon-57-precomposed.png"> -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a href="#" class="brand"><img src="/static/img/ssulogo.gif"> SSU Key Control</a>
+          <div id="navbar-user" class="pull-right">
+            <i class="icon-user"></i> Username <a href="#" class="btn btn-inline">Log Out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="/key_control/home/">Home</a></li>
+              <li class="nav-header">Issue and Return Keys</li>
+              <li><a href="/key_control/issue/">Issue Keys</a></li>
+              <li><a href="#">Return Keys</a></li>
+              <li class="nav-header">Key Reports</li>
+              <li><a href="#">Key Distribution</a></li>
+              <li><a href="#">Key Transaction History</a></li>
+              <li><a href="#">Key Open Locations</a></li>
+              <li><a href="#">Key Positions</a></li>
+              <li><a href="#">Buildings (Facilities)</a></li>
+              <li><a href="#">Error Reports</a></li>
+              <li><a href="#">Keys Due Report</a></li>
+              <li class="nav-header">Administrative Tasks</li>
+              <li><a href="#">Maintain User Types</a></li>
+              <li><a href="#">Maintain Key Types</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9">
+          {% block content %}
+          {% endblock content %}
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; Sonoma State University 2013</p>
+      </footer>
+
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+  </body>
+</html>

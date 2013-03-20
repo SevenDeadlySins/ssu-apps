@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+
+{% block content %}
+  <table border="1">
+  	<thead>
+  		<th>Position ID</th><th>Key Type</th><th>Keyway</th><th>Status</th><th>Notes</th>
+  	</thead>
+  	{% for position in position_list %}
+  	<tr>
+  		<td>{{ position.position }}</td><td>{{ position.keytype }}</td><td>{{ position.keyway }}</td><td>{{ position.status }}</td><td>{{ position.notes }}</td>
+  	</tr>
+  	{% endfor %}
+  </table>
+  <a href='/key_control/position/add/' class="btn btn-success">Add Position</a>
+{% endblock content %}
