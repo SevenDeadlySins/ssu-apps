@@ -6,7 +6,7 @@ from django.views.generic.edit import FormView
 from braces.views import LoginRequiredMixin
 
 from .models import Position, Sequence, Distribution, UserType, KeyType
-from .forms import PositionForm, KeyIssueForm, KeyFinderForm, KeyRenewForm
+from .forms import PositionForm, KeyIssueForm, KeyFinderForm, KeyRenewForm, KeysDueReportForm
 
 
 class PositionListView(LoginRequiredMixin, ListView):
@@ -160,6 +160,38 @@ class SequenceDeleteView(LoginRequiredMixin, View):
         position = sequence.position
         sequence.delete()
         return redirect(position)
+
+
+class DistributionListView(LoginRequiredMixin, ListView):
+    template_name = 'distributionlist.html'
+    model = Distribution
+    paginate_by = 20
+    context_object_name = 'distribution_list'
+
+
+class KeysDueReportView(LoginRequiredMixin, ListView):
+    template_name = 'keysduereport.html'
+    model = Distribution
+    paginate_by = 20
+    context_object_name = 'distribution_list'
+
+    def get_queryset(self, *args, **kwargs):
+        current_distributions = []
+        for sequence in Sequence.objects.filter(issued=True):
+            current_distributions.append(sequence.get_current_distribution().id)
+        distribution_set = Distribution.objects.filter(pk__in=current_distributions)
+        if self.request.GET.get('startdate'):
+            startdate = self.request.GET.get('startdate')
+            distribution_set = distribution_set.filter(duedate__gte=startdate)
+        if self.request.GET.get('enddate'):
+            enddate = self.request.GET.get('enddate')
+            distribution_set = distribution_set.filter(duedate__lte=enddate)
+        return distribution_set
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(KeysDueReportView, self).get_context_data(*args, **kwargs)
+        context['form'] = KeysDueReportForm(self.request.GET)
+        return context
 
 
 class UserTypeView(LoginRequiredMixin, ListView):

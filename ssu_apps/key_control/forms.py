@@ -143,6 +143,24 @@ class KeyRenewForm(forms.ModelForm):
         )
 
 
+class KeysDueReportForm(forms.Form):
+    # TODO: Define form fields here
+    startdate = forms.DateField(required=False)
+    enddate = forms.DateField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(KeysDueReportForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'GET'
+        self.helper.form_id = 'id_authenticationform'
+        self.helper.form_class = 'form-inline'
+        self.helper.layout = Layout(
+            'startdate',
+            'enddate',
+            Submit('submit', 'Filter Report', css_class="btn btn-primary"),
+        )
+
+
 class CrispyAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)

@@ -1,0 +1,36 @@
+{% extends "_base.html" %}
+{% load pagination %}
+
+{% block content %}
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <th>Position</th>
+      <th>Sequence</th>
+      <th>Type</th>
+      <th>User ID</th>
+      <th>First</th>
+      <th>Last</th>
+      <th>User Type</th>
+      <th>Due Date</th>
+      <th>Trans Date</th>
+      <th>Updater</th>
+      <th>Notes</th>
+    </thead>
+    {% for distribution in distribution_list %}
+    <tr>
+      <td>{{ distribution.position }}</td>
+      <td>{{ distribution.sequence.sequence_num }}</td>
+      <td>{{ distribution.transtype }}</td>
+      <td>{{ distribution.userID }}</td>
+      <td>{{ distribution.fname }}</td>
+      <td>{{ distribution.lname }}</td>
+      <td>{{ distribution.usertype }}</td>
+      <td>{{ distribution.duedate }}</td>
+      <td>{{ distribution.date }}</td>
+      <td>{{ distribution.updater }}</td>
+      <td>{{ distribution.notes }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% paginate page_obj.number page_obj.paginator.num_pages %}
+{% endblock content %}
