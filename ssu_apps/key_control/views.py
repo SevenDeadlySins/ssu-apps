@@ -45,6 +45,9 @@ class PositionFormView(LoginRequiredMixin, FormView):
     template_name = 'positionadd.html'
     form_class = PositionForm
 
+    def get_success_url(self, *args, **kwargs):
+        return '/key_control/position/list/'
+
     def form_valid(self, form):
         super(PositionFormView, self).form_valid(form)
         position = form.save()
