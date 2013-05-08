@@ -74,7 +74,7 @@
 						</tr>
 						{% for sequence in unissued %}
 							<tr>
-								<td><button class="btn btn-danger btn-mini">Delete</button></td>
+								<td><a href="/key_control/sequence/{{ sequence.id }}/delete/" class="btn btn-danger btn-mini">Delete</a></td>
 								<td>{{ sequence.sequence_num }}</td>
 								<td>{{ sequence.get_current_distribution.transtype }}</td>
 								<td>{{ sequence.get_current_distribution.date }}</td>

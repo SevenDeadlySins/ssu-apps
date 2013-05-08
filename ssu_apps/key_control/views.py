@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import View, ListView, TemplateView
 from django.views.generic.edit import FormView
@@ -148,6 +149,17 @@ class KeyRenewView(LoginRequiredMixin, FormView):
         sequence.issued = True
         sequence.save()
         return redirect(new_distribution.position)
+
+
+class SequenceDeleteView(LoginRequiredMixin, View):
+    """docstring for SequenceDeleteView"""
+    def get(self, request, *args, **kwargs):
+        sequence = get_object_or_404(Sequence, pk=self.kwargs['pk'])
+        if sequence.issued:
+            raise PermissionDenied
+        position = sequence.position
+        sequence.delete()
+        return redirect(position)
 
 
 class UserTypeView(LoginRequiredMixin, ListView):
