@@ -122,6 +122,27 @@ class KeyFinderForm(forms.Form):
         # self.fields['sequence'].required = False
 
 
+class KeyRenewForm(forms.ModelForm):
+    class Meta:
+        model = Distribution
+        fields = ('duedate',)
+
+    def __init__(self, *args, **kwargs):
+        super(KeyRenewForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id_keyrenewform'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Enter a new due date for the key.',
+                'duedate',
+            ),
+            FormActions(
+                Submit('submit', 'Renew Key', css_class="btn btn-primary"),
+            ),
+        )
+
+
 class CrispyAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)

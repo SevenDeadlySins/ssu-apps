@@ -1,11 +1,11 @@
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import View, ListView, TemplateView
 from django.views.generic.edit import FormView
 
 from braces.views import LoginRequiredMixin
 
 from .models import Position, Sequence, Distribution, UserType, KeyType
-from .forms import PositionForm, KeyIssueForm, KeyFinderForm
+from .forms import PositionForm, KeyIssueForm, KeyFinderForm, KeyRenewForm
 
 
 class PositionListView(LoginRequiredMixin, ListView):
@@ -82,10 +82,10 @@ class KeyIssueView(LoginRequiredMixin, FormView):
         sequence = distribution.sequence
         sequence.issued = True
         sequence.save()
-        return redirect()
+        return redirect(distribution.position)
 
 
-class KeyReturnView(LoginRequiredMixin, FormView):
+class KeyReturnFinderView(LoginRequiredMixin, FormView):
     """docstring for KeyReturnView"""
     template_name = 'keyreturn.html'
     form_class = KeyFinderForm
@@ -98,7 +98,10 @@ class KeyReturnResultsView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(KeyReturnResultsView, self).get_context_data(*args, **kwargs)
         get = self.request.GET
-        distributions = Distribution.objects.all()
+        current_distributions = []
+        for sequence in Sequence.objects.filter(issued=True):
+            current_distributions.append(sequence.get_current_distribution().id)
+        distribution_set = Distribution.objects.filter(pk__in=current_distributions)
         search_kwargs = {}
         for k, v in get.items():
             if k != "submit":
@@ -106,10 +109,45 @@ class KeyReturnResultsView(TemplateView):
                     kwarg = {'%s__contains' % k: v}
                     search_kwargs.update(kwarg)
         print search_kwargs
-        distributions = distributions.filter(**search_kwargs)
-        print distributions
-        context['results'] = distributions
+        distribution_set = distribution_set.filter(**search_kwargs)
+        print distribution_set
+        context['results'] = distribution_set
         return context
+
+
+class KeyReturnView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        distribution = get_object_or_404(Distribution, pk=self.kwargs['pk'])
+        sequence = distribution.sequence
+        sequence.issued = False
+        sequence.save()
+        new_distribution = Distribution(position=distribution.position, sequence=distribution.sequence, transtype="RETURNED", updater=request.user)
+        new_distribution.save()
+        return redirect('/key_control/')
+
+
+class KeyRenewView(LoginRequiredMixin, FormView):
+    template_name = 'keyrenew.html'
+    form_class = KeyRenewForm
+
+    def form_valid(self, form):
+        old_distribution = Distribution.objects.get(pk=self.kwargs['pk'])
+        new_distribution = form.save(commit=False)
+        new_distribution.transtype = "RENEWED"
+        new_distribution.updater = self.request.user
+        new_distribution.position = old_distribution.position
+        new_distribution.sequence = old_distribution.sequence
+        new_distribution.userID = old_distribution.userID
+        new_distribution.usertype = old_distribution.usertype
+        new_distribution.fname = old_distribution.fname
+        new_distribution.lname = old_distribution.lname
+        new_distribution.department = old_distribution.department
+        new_distribution.notes = old_distribution.notes
+        new_distribution.save()
+        sequence = new_distribution.sequence
+        sequence.issued = True
+        sequence.save()
+        return redirect(new_distribution.position)
 
 
 class UserTypeView(LoginRequiredMixin, ListView):

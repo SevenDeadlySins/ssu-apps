@@ -16,7 +16,7 @@
 		</tr>
 		{% for distribution in results %}
 			<tr>
-				<td><button class="btn btn-warning btn-mini">Return</button><button class="btn btn-primary btn-mini">Renew</button></td>
+				<td><a href="/key_control/return/{{ distribution.id }}/" class="btn btn-warning btn-mini">Return</a><a href="/key_control/return/renew/{{ distribution.id }}/" class="btn btn-primary btn-mini">Renew</a></td>
 				<td>{{ distribution.position }}</td>
 				<td>{{ distribution.sequence.sequence_num }}</td>
 				<td>{{ distribution.usertype }}</td>
