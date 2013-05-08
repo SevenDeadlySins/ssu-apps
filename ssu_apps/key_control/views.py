@@ -6,7 +6,7 @@ from django.views.generic.edit import FormView
 from braces.views import LoginRequiredMixin
 
 from .models import Position, Sequence, Distribution, UserType, KeyType
-from .forms import PositionForm, KeyIssueForm, KeyFinderForm, KeyRenewForm, KeysDueReportForm
+from .forms import PositionForm, KeyIssueForm, KeyFinderForm, KeyRenewForm, KeysDueReportForm, SequenceStatusForm
 
 
 class PositionListView(LoginRequiredMixin, ListView):
@@ -192,6 +192,22 @@ class KeysDueReportView(LoginRequiredMixin, ListView):
         context = super(KeysDueReportView, self).get_context_data(*args, **kwargs)
         context['form'] = KeysDueReportForm(self.request.GET)
         return context
+
+
+class SequenceStatusView(LoginRequiredMixin, FormView):
+    template_name = "sequencestatus.html"
+    form_class = SequenceStatusForm
+
+    def form_valid(self, form):
+        sequence = get_object_or_404(Sequence, pk=self.kwargs['pk'])
+        distribution = form.save(commit=False)
+        distribution.sequence = sequence
+        distribution.position = sequence.position
+        distribution.updater = self.request.user
+        distribution.save()
+        sequence.issued = False
+        sequence.save()
+        return redirect(distribution.position)
 
 
 class UserTypeView(LoginRequiredMixin, ListView):

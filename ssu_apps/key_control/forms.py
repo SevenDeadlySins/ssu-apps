@@ -161,6 +161,28 @@ class KeysDueReportForm(forms.Form):
         )
 
 
+class SequenceStatusForm(forms.ModelForm):
+    class Meta:
+        model = Distribution
+        fields = ('transtype', 'notes')
+
+    def __init__(self, *args, **kwargs):
+        super(SequenceStatusForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id_sequencestatusform'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'transtype',
+                'notes',
+            ),
+            FormActions(
+                Submit('submit', 'Log In', css_class="btn btn-primary"),
+            ),
+        )
+
+
 class CrispyAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)

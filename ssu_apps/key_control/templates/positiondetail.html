@@ -38,6 +38,7 @@
 				<div class="accordion-inner">
 					<table class="table table-bordered table-condense">
 						<tr>
+							<th></th>
 							<th>Sequence</th>
 							<th>Last Transaction Type</th>
 							<th>Last Transaction Date</th>
@@ -46,6 +47,7 @@
 						</tr>
 						{% for sequence in issued %}
 							<tr>
+								<td><a href="/key_control/sequence/{{ sequence.id }}/status/" class="btn btn-primary btn-mini">Update</a></td>
 								<td>{{ sequence.sequence_num }}</td>
 								<td>{{ sequence.get_current_distribution.transtype }}</td>
 								<td>{{ sequence.get_current_distribution.date }}</td>
@@ -74,7 +76,7 @@
 						</tr>
 						{% for sequence in unissued %}
 							<tr>
-								<td><a href="/key_control/sequence/{{ sequence.id }}/delete/" class="btn btn-danger btn-mini">Delete</a></td>
+								<td><a href="/key_control/sequence/{{ sequence.id }}/delete/" class="btn btn-danger btn-mini">Delete</a><a href="/key_control/sequence/{{ sequence.id }}/status/" class="btn btn-primary btn-mini">Update</a></td>
 								<td>{{ sequence.sequence_num }}</td>
 								<td>{{ sequence.get_current_distribution.transtype }}</td>
 								<td>{{ sequence.get_current_distribution.date }}</td>

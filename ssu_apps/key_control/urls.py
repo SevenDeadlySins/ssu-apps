@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
 
-from .views import PositionListView, PositionDetailView, PositionFormView, CreateSequenceView, UserTypeView, KeyTypeView, KeyIssueView, KeyReturnView, KeyReturnFinderView, KeyReturnResultsView, KeyRenewView, SequenceDeleteView, DistributionListView, KeysDueReportView
+from .views import PositionListView, PositionDetailView, PositionFormView, CreateSequenceView, UserTypeView, KeyTypeView, KeyIssueView, KeyReturnView, KeyReturnFinderView, KeyReturnResultsView, KeyRenewView, SequenceDeleteView, SequenceStatusView, DistributionListView, KeysDueReportView
 
 
 urlpatterns = patterns('',
@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^position/(?P<pk>\d*)/$', PositionDetailView.as_view()),
     url(r'^position/(?P<pk>\d*)/createseq/$', CreateSequenceView.as_view()),
     url(r'^position/add/$', PositionFormView.as_view()),
+    url(r'^sequence/(?P<pk>\d*)/status/$', SequenceStatusView.as_view()),
     url(r'^sequence/(?P<pk>\d*)/delete/$', SequenceDeleteView.as_view()),
     url(r'^usertypes/$', UserTypeView.as_view()),
     url(r'^keytypes/$', KeyTypeView.as_view()),
