@@ -1,11 +1,12 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import AuthenticationForm
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit
+from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from crispy_forms.bootstrap import FormActions
 
-from .models import Position
+from .models import Position, Distribution
 
 
 class PositionForm(forms.ModelForm):
@@ -18,20 +19,122 @@ class PositionForm(forms.ModelForm):
         return self.cleaned_data['position']
 
     def __init__(self, *args, **kwargs):
+        super(PositionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id_position'
-        self.helper.form_class = 'form-horizontal'
+        # self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'position',
-                'keytype',
-                'keyway',
-                'status',
-                'notes',
+                Div('position',
+                    'keytype',
+                    'keyway',
+                    'status',
+                    css_class="span4"
+                    ),
+                Div('notes',
+                    css_class="span4"
+                    ),
             ),
             FormActions(
                 Submit('submit', 'Add Position', css_class="btn btn-primary")
             )
         )
-        super(PositionForm, self).__init__(*args, **kwargs)
+
+
+class KeyIssueForm(forms.ModelForm):
+    class Meta:
+        model = Distribution
+        fields = (
+            'usertype',
+            'userID',
+            'fname',
+            'lname',
+            'department',
+            # 'position',
+            'sequence',
+            'duedate',
+            'notes',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(KeyIssueForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id_keyissueform'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Issue Keys',
+                HTML('<h3>Identify Person to be Issued Keys'),
+                'usertype',
+                'userID',
+                'fname',
+                'lname',
+                'department',
+                HTML('<h3>Issue Key</h3>'),
+                # 'position',
+                'sequence',
+                'duedate',
+                'notes',
+            ),
+            FormActions(
+                Submit('submit', 'Issue Key', css_class="btn btn-primary"),
+            ),
+        )
+        self.fields['usertype'].required = True
+        self.fields['fname'].required = True
+        self.fields['lname'].required = True
+        # self.fields['sequence'].choices = [('', '---------')]
+
+
+class KeyFinderForm(forms.Form):
+    # TODO: Define form fields here
+    userID = forms.IntegerField(required=False)
+    fname = forms.CharField(required=False)
+    lname = forms.CharField(required=False)
+    position = forms.IntegerField(required=False)
+    sequence = forms.IntegerField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(KeyFinderForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'GET'
+        self.helper.form_action = '/key_control/return/results/'
+        self.helper.form_id = 'id_keyfinderform'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Key Finder Form',
+                'userID',
+                'fname',
+                'lname',
+                'position',
+                'sequence',
+            ),
+            FormActions(
+                Submit('submit', 'Look Up Keys', css_class="btn btn-primary")
+            )
+        )
+        # self.fields['userID'].required = False
+        # self.fields['fname'].required = False
+        # self.fields['lname'].required = False
+        # self.fields['position'].required = False
+        # self.fields['sequence'].required = False
+
+
+class CrispyAuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id_authenticationform'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'username',
+                'password',
+            ),
+            FormActions(
+                Submit('submit', 'Log In', css_class="btn btn-primary"),
+            ),
+        )

@@ -1,16 +1,29 @@
 {% extends "_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block jsinclude %}
+  <script type="text/javascript">
+  $(function() {
+    $('.dateinput').datepicker({format: "yyyy/mm/dd"});
+
+    $('#id_position').change(function() {
+      value = $(this).val();
+      alert(value);
+      Dajaxice.key_control.noargsTest(Dajax.process,{'value': value});
+    });
+  });
+
+  function setSequences (data) {
+    $('#id_sequence').empty();
+    $('#id_sequence').append($('<option></option>').attr("value", "").text('---------'));
+    var JSONdata = $.parseJSON(data);
+    $.each(JSONdata, function(index, sequence){
+      $('#id_sequence').append($('<option></option>').attr("value", sequence.pk).text(sequence.fields['sequence_num']));
+    });
+  };
+  </script>
+{% endblock jsinclude %}
 
 {% block content %}
-  <form class="form-inline">
-    <fieldset>
-      <legend>Fields with an asterisk (*) are required.</legend>
-      <input type="text" class="input-mini" placeholder="User Type*">
-      <input type="text" class="input-mini" placeholder="User ID">
-      <input type="text" class="input-medium" placeholder="User First Name*">
-      <input type="text" class="input-medium" placeholder="User Last Name*">
-      <input type="text" placeholder="Department">
-    </fieldset>
-  </form>
-
-  {{ form.as_p }}
+  {% crispy form %}
 {% endblock content %}

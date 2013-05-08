@@ -1,12 +1,91 @@
 {% extends "_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block jsinclude %}
+	<script src='/static/js/key_control.js'></script>
+{% endblock jsinclude %}
 
 {% block content %}
-  <table border="1">
-  	<thead>
-  		<th>Position ID</th><th>Key Type</th><th>Keyway</th><th>Status</th><th>Notes</th>
-  	</thead>
-  	<tr>
-  		<td>{{ position.position }}</td><td>{{ position.keytype }}</td><td>{{ position.keyway }}</td><td>{{ position.status }}</td><td>{{ position.notes }}</td>
-  	</tr>
-  </table>
+	<div class="accordion" id="position_accordion">
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle" href="#collapse1" data-toggle="collapse" data-parent="#position_accordion">View/Edit Position Details</a>
+			</div>
+			<div id="collapse1" class="accordion-body collapse">
+				<div class="accordion-inner">
+					{% crispy form %}
+				</div>
+			</div>
+		</div>
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle" href="#collapse2" data-toggle="collapse" data-parent="#position_accordion">Create Sequences</a>
+			</div>
+			<div id="collapse2" class="accordion-body collapse">
+				<div class="accordion-inner">
+					<p><strong>Key Position:</strong> {{ position.position }}</p>
+					<p><strong>Create Sequences:</strong> From <input id='seqFrom' class='span1'> To <input id='seqTo' class='span1'></p>
+					<button class="btn btn-primary" onclick="createSequences({{ position.position }})">Create Range of Sequences</button>
+				</div>
+			</div>
+		</div>
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle" href="#collapse3" data-toggle="collapse" data-parent="#position_accordion">View Issued Key Sequences</a>
+			</div>
+			<div id="collapse3" class="accordion-body collapse">
+				<div class="accordion-inner">
+					<table class="table table-bordered table-condense">
+						<tr>
+							<th>Sequence</th>
+							<th>Last Transaction Type</th>
+							<th>Last Transaction Date</th>
+							<th>Due Date</th>
+							<th>Updater</th>
+						</tr>
+						{% for sequence in issued %}
+							<tr>
+								<td>{{ sequence.sequence_num }}</td>
+								<td>{{ sequence.get_current_distribution.transtype }}</td>
+								<td>{{ sequence.get_current_distribution.date }}</td>
+								<td>{{ sequence.get_current_distribution.due_date }}</td>
+								<td>{{ sequence.get_current_distribution.updater }}</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan='5'>All sequences are currently unissued.</td></tr>
+						{% endfor %}
+					</table>
+				</div>
+			</div>
+			<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle" href="#collapse4" data-toggle="collapse" data-parent="#position_accordion">View/Delete Unissued Key Sequences</a>
+			</div>
+			<div id="collapse4" class="accordion-body collapse">
+				<div class="accordion-inner">
+					<table class="table table-bordered table-condense">
+						<tr>
+							<th></th>
+							<th>Sequence</th>
+							<th>Last Transaction Type</th>
+							<th>Last Transaction Date</th>
+							<th>Updater</th>
+						</tr>
+						{% for sequence in unissued %}
+							<tr>
+								<td><button class="btn btn-danger btn-mini">Delete</button></td>
+								<td>{{ sequence.sequence_num }}</td>
+								<td>{{ sequence.get_current_distribution.transtype }}</td>
+								<td>{{ sequence.get_current_distribution.date }}</td>
+								<td>{{ sequence.get_current_distribution.updater }}</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan='5'>All sequences are currently issued.</td></tr>
+						{% endfor %}
+					</table>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
 {% endblock content %}

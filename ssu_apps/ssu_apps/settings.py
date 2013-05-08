@@ -77,6 +77,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'dajaxice.finders.DajaxiceFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -121,9 +122,12 @@ INSTALLED_APPS = (
     'django_extensions',
     'south',
     'crispy_forms',
+    'dajaxice',
+    'dajax',
 
     # SSU Apps
     'key_control',
+    'tours',
 )
 
 
@@ -162,3 +166,9 @@ LOGGING = {
         },
     }
 }
+
+LOGIN_URL = '/login/'
+
+LOGOUT_URL = '/logout/'
+
+LOGIN_REDIRECT_URL = '/key_control/'

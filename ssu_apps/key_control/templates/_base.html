@@ -1,3 +1,6 @@
+{% load dajaxice_templatetags %}
+{% load static from staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,6 +12,7 @@
 
     <!-- Le styles -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
     <style type="text/css">
       body {
         padding-top: 100px;
@@ -45,9 +49,14 @@
       <div class="navbar-inner">
         <div class="container-fluid">
           <a href="#" class="brand"><img src="/static/img/ssulogo.gif"> SSU Key Control</a>
-          <div id="navbar-user" class="pull-right">
-            <i class="icon-user"></i> Username <a href="#" class="btn btn-inline">Log Out</a>
-          </div>
+          <ul class="nav pull-right">
+            {% if user.is_authenticated %}
+              <li><i class="icon-user"></i> {{ user.username }}</li>
+              <li><a href="/logout/">Log Out</a></li>
+            {% else %}
+              <li><a href="/login/">Log In</a></li>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </div>
@@ -60,18 +69,18 @@
               <li class="active"><a href="/key_control/home/">Home</a></li>
               <li class="nav-header">Issue and Return Keys</li>
               <li><a href="/key_control/issue/">Issue Keys</a></li>
-              <li><a href="#">Return Keys</a></li>
+              <li><a href="/key_control/return/">Return Keys</a></li>
               <li class="nav-header">Key Reports</li>
               <li><a href="#">Key Distribution</a></li>
               <li><a href="#">Key Transaction History</a></li>
               <li><a href="#">Key Open Locations</a></li>
-              <li><a href="#">Key Positions</a></li>
+              <li><a href="/key_control/position/">Key Positions</a></li>
               <li><a href="#">Buildings (Facilities)</a></li>
               <li><a href="#">Error Reports</a></li>
               <li><a href="#">Keys Due Report</a></li>
               <li class="nav-header">Administrative Tasks</li>
-              <li><a href="#">Maintain User Types</a></li>
-              <li><a href="#">Maintain Key Types</a></li>
+              <li><a href="/key_control/usertypes/">Maintain User Types</a></li>
+              <li><a href="/key_control/keytypes/">Maintain Key Types</a></li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -92,7 +101,12 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-
+    <script src="{% static 'dajax/jquery.dajax.core.js' %}"></script>
+    {% dajaxice_js_import %}
+    {% block jsinclude %}{% endblock jsinclude %}
   </body>
 </html>

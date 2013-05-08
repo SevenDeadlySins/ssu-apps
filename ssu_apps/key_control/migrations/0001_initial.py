@@ -35,7 +35,7 @@ class Migration(SchemaMigration):
             ('keytype', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['key_control.KeyType'])),
             ('keyway', self.gf('django.db.models.fields.CharField')(max_length=25)),
             ('status', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['key_control.KeyStatus'])),
-            ('notes', self.gf('django.db.models.fields.TextField')()),
+            ('notes', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
         ))
         db.send_create_signal(u'key_control', ['Position'])
 
@@ -43,8 +43,12 @@ class Migration(SchemaMigration):
         db.create_table(u'key_control_sequence', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('position', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['key_control.Position'])),
+            ('sequence_num', self.gf('django.db.models.fields.IntegerField')()),
         ))
         db.send_create_signal(u'key_control', ['Sequence'])
+
+        # Adding unique constraint on 'Sequence', fields ['position', 'sequence_num']
+        db.create_unique(u'key_control_sequence', ['position_id', 'sequence_num'])
 
         # Adding model 'Distribution'
         db.create_table(u'key_control_distribution', (
@@ -52,7 +56,6 @@ class Migration(SchemaMigration):
             ('position', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['key_control.Position'])),
             ('sequence', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['key_control.Sequence'])),
             ('transtype', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('updater', self.gf('django.db.models.fields.CharField')(max_length=10)),
             ('date', self.gf('django.db.models.fields.DateField')(auto_now=True, blank=True)),
             ('usertype', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['key_control.UserType'])),
             ('userID', self.gf('django.db.models.fields.CharField')(max_length=15)),
@@ -77,6 +80,9 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Removing unique constraint on 'Sequence', fields ['position', 'sequence_num']
+        db.delete_unique(u'key_control_sequence', ['position_id', 'sequence_num'])
+
         # Deleting model 'UserType'
         db.delete_table(u'key_control_usertype')
 
@@ -112,7 +118,6 @@ class Migration(SchemaMigration):
             'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"}),
             'sequence': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Sequence']"}),
             'transtype': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'updater': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'userID': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'usertype': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.UserType']"})
         },
@@ -139,14 +144,15 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Position'},
             'keytype': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.KeyType']"}),
             'keyway': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'notes': ('django.db.models.fields.TextField', [], {}),
+            'notes': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'position': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.KeyStatus']"})
         },
         u'key_control.sequence': {
-            'Meta': {'object_name': 'Sequence'},
+            'Meta': {'unique_together': "(('position', 'sequence_num'),)", 'object_name': 'Sequence'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"})
+            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"}),
+            'sequence_num': ('django.db.models.fields.IntegerField', [], {})
         },
         u'key_control.usertype': {
             'Meta': {'object_name': 'UserType'},

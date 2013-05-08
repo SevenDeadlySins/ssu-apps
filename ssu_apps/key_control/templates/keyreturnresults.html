@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+
+{% block content %}
+	<h3>Results</h3>
+	<table class="table table-bordered table-condense">
+		<tr>
+			<th>Return/Renew</th>
+			<th>Pos.</th>
+			<th>Seq.</th>
+			<th>User Type</th>
+			<th>User ID</th>
+			<th>Department</th>
+			<th>Due Date</th>
+			<th>Date Issued</th>
+			<th>Notes</th>
+		</tr>
+		{% for distribution in results %}
+			<tr>
+				<td><button class="btn btn-warning btn-mini">Return</button><button class="btn btn-primary btn-mini">Renew</button></td>
+				<td>{{ distribution.position }}</td>
+				<td>{{ distribution.sequence.sequence_num }}</td>
+				<td>{{ distribution.usertype }}</td>
+				<td>{{ distribution.userID }}</td>
+				<td>{{ distribution.department }}</td>
+				<td>{{ distribution.duedate }}</td>
+				<td>{{ distribution.date }}</td>
+				<td>{{ distribution.notes }}</td>
+			</tr>
+		{% empty %}
+			<tr><td colspan='5'>All sequences are currently issued.</td></tr>
+		{% endfor %}
+	</table>
+{% endblock content %}

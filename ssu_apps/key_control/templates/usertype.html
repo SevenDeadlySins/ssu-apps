@@ -1,0 +1,20 @@
+{% extends "_base.html" %}
+
+{% block content %}
+	<table class="table table-bordered table-condensed table-striped">
+		<tr>
+			<th>Code</th>
+			<th>Description</th>
+			<th>Distributions</th>
+			<th>Open Locations</th>
+		</tr>
+		{% for type in usertypes %}
+			<tr>
+				<td>{{ type.code }}</td>
+				<td>{{ type.usertype }}</td>
+				<td>{{ type.distribution_set.count }}</td>
+				<td>0</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endblock content %}

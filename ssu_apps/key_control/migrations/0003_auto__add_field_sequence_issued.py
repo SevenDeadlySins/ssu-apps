@@ -8,14 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Distribution.updater'
-        db.delete_column(u'key_control_distribution', 'updater_id')
+        # Adding field 'Sequence.issued'
+        db.add_column(u'key_control_sequence', 'issued',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 
 
     def backwards(self, orm):
+        # Deleting field 'Sequence.issued'
+        db.delete_column(u'key_control_sequence', 'issued')
 
-        # User chose to not deal with backwards NULL issues for 'Distribution.updater'
-        raise RuntimeError("Cannot reverse this migration. 'Distribution.updater' and its values cannot be restored.")
 
     models = {
         u'key_control.distribution': {
@@ -27,7 +29,6 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'lname': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'notes': ('django.db.models.fields.TextField', [], {}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"}),
             'sequence': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Sequence']"}),
             'transtype': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'userID': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
@@ -61,9 +62,11 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.KeyStatus']"})
         },
         u'key_control.sequence': {
-            'Meta': {'object_name': 'Sequence'},
+            'Meta': {'unique_together': "(('position', 'sequence_num'),)", 'object_name': 'Sequence'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"})
+            'issued': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"}),
+            'sequence_num': ('django.db.models.fields.IntegerField', [], {})
         },
         u'key_control.usertype': {
             'Meta': {'object_name': 'UserType'},

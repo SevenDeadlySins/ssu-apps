@@ -8,30 +8,22 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        # Renaming column for 'Distribution.updater' to match new field type.
-        db.rename_column(u'key_control_distribution', 'updater', 'updater_id')
-        # Changing field 'Distribution.updater'
-        db.alter_column(u'key_control_distribution', 'updater_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User']))
-        # Adding index on 'Distribution', fields ['updater']
-        db.create_index(u'key_control_distribution', ['updater_id'])
+        # Adding field 'Distribution.updater'
+        db.add_column(u'key_control_distribution', 'updater',
+                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['auth.User']),
+                      keep_default=False)
 
 
-        # Changing field 'Position.notes'
-        db.alter_column(u'key_control_position', 'notes', self.gf('django.db.models.fields.TextField')(null=True))
+        # Changing field 'Distribution.duedate'
+        db.alter_column(u'key_control_distribution', 'duedate', self.gf('django.db.models.fields.DateField')(null=True))
 
     def backwards(self, orm):
-        # Removing index on 'Distribution', fields ['updater']
-        db.delete_index(u'key_control_distribution', ['updater_id'])
+        # Deleting field 'Distribution.updater'
+        db.delete_column(u'key_control_distribution', 'updater_id')
 
 
-        # Renaming column for 'Distribution.updater' to match new field type.
-        db.rename_column(u'key_control_distribution', 'updater_id', 'updater')
-        # Changing field 'Distribution.updater'
-        db.alter_column(u'key_control_distribution', 'updater', self.gf('django.db.models.fields.CharField')(max_length=10))
-
-        # Changing field 'Position.notes'
-        db.alter_column(u'key_control_position', 'notes', self.gf('django.db.models.fields.TextField')(default=''))
+        # User chose to not deal with backwards NULL issues for 'Distribution.duedate'
+        raise RuntimeError("Cannot reverse this migration. 'Distribution.duedate' and its values cannot be restored.")
 
     models = {
         u'auth.group': {
@@ -73,17 +65,16 @@ class Migration(SchemaMigration):
         u'key_control.distribution': {
             'Meta': {'object_name': 'Distribution'},
             'date': ('django.db.models.fields.DateField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'department': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'duedate': ('django.db.models.fields.DateField', [], {}),
-            'fname': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'department': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
+            'duedate': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'fname': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'lname': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'notes': ('django.db.models.fields.TextField', [], {}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"}),
+            'lname': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'notes': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'sequence': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Sequence']"}),
             'transtype': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'updater': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'userID': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'userID': ('django.db.models.fields.CharField', [], {'max_length': '15', 'blank': 'True'}),
             'usertype': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.UserType']"})
         },
         u'key_control.keystatus': {
@@ -114,9 +105,11 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.KeyStatus']"})
         },
         u'key_control.sequence': {
-            'Meta': {'object_name': 'Sequence'},
+            'Meta': {'unique_together': "(('position', 'sequence_num'),)", 'object_name': 'Sequence'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"})
+            'issued': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['key_control.Position']"}),
+            'sequence_num': ('django.db.models.fields.IntegerField', [], {})
         },
         u'key_control.usertype': {
             'Meta': {'object_name': 'UserType'},
